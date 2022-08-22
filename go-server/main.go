@@ -35,8 +35,6 @@ type Task struct {
 var tasks []Task
 
 func main() {
-	fmt.Println("Hello, World")
-
 	// Init Router.
 	r := mux.NewRouter()
 
@@ -59,31 +57,32 @@ func main() {
 	// My APIs.
 	// Get all tasks.
 	// Future task: logic for "/api/dodo?id="
-	r.HandleFunc("/api/todo", GetAllTasks).Methods("GET")
+	r.HandleFunc("/api/task", GetAllTasks).Methods("GET")
 	// Get task info by id.
-	r.HandleFunc("/api/todo/{id}", GetTaskById).Methods("GET")
+	r.HandleFunc("/api/task/{id}", GetTaskById).Methods("GET")
 	// Future tasks.
 	// Get all done tasks.
 	// Get all undone tasks.
 	// Get all tasks from startDate to endDate.
 
 	// Add a new task.
-	r.HandleFunc("/api/todo", AddTask).Methods("POST")
+	r.HandleFunc("/api/task", AddTask).Methods("POST")
 
 	// Set task's status to done.
-	r.HandleFunc("/api/todo/done/{id}", SetDone).Methods("PUT")
+	r.HandleFunc("/api/task/done/{id}", SetDone).Methods("PUT")
 	// Set task's status to undone.
-	r.HandleFunc("/api/todo/undone/{id}", SetUndone).Methods("PUT")
+	r.HandleFunc("/api/task/undone/{id}", SetUndone).Methods("PUT")
 	// Future tasks.
 	// Modify task's name.
 	// Modify task's description.
 
 	// Delete a task by id.
-	// r.HandleFunc("/api/deleteTask/{id}", DeleteTodo).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/api/task/{id}", DeleteTaskById).Methods("DELETE")
 	// Delete all tasks.
 	// r.HandleFunc("/api/deleteAllTask", DeleteAllTodo).Methods("DELETE", "OPTIONS")
 
 	// Start server.
+	fmt.Println("Listening and serving.....")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
@@ -93,7 +92,6 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllTasks(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Get all tasks.")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tasks)
 }
@@ -125,13 +123,12 @@ func AddTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetDone(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Change status to done")
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	for i, t := range tasks {
 		if params["id"] == t.ID {
 			tasks[i].Status = true
-			json.NewEncoder(w).Encode(t)
+			json.NewEncoder(w).Encode(tasks[i])
 			return
 		}
 	}
@@ -139,15 +136,30 @@ func SetDone(w http.ResponseWriter, r *http.Request) {
 }
 
 func SetUndone(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Change status to done")
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	for i, t := range tasks {
 		if params["id"] == t.ID {
 			tasks[i].Status = false
-			json.NewEncoder(w).Encode(t)
+			json.NewEncoder(w).Encode(tasks[i])
 			return
 		}
 	}
 	json.NewEncoder(w).Encode((&Task{}))
+}
+
+func DeleteTaskById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for i, t := range tasks {
+		if params["id"] == t.ID {
+			// Delete this task.
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			// Return all tasks.
+			json.NewEncoder(w).Encode(tasks)
+			return
+		}
+	}
+	// Future task: Return error invalid
+	json.NewEncoder(w).Encode(&Task{})
 }
