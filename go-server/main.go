@@ -15,3 +15,5 @@ func main() {
 	fmt.Println("Listening and serving.....")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
+<<<<<<< HEAD
+=======
