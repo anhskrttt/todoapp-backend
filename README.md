@@ -6,12 +6,30 @@
     * CSS 
     * GoLang
     * gorilla/mux
-    * joho/godotenv 
-    * MongoDB
+
 * Future tasks: 
     * ReactJs
-    * PostGre
+    * PostGre/MongoDB
 
+## Directory Layout
+```bash
+    .
+    ├── go-server                   # Main backend server
+    │   ├── go.mod
+    │   ├── go.sum
+    │   ├── main.go                 # Main go file
+    │   ├── middleware
+    │   │   └── middleware.go       # Middleware actions/functions, which are feed to HandleFunc() later
+    │   ├── models
+    │   │   └── models.go           # Structures/Models for database
+    │   └── router
+    │       └── router.go           # API Routes    
+    ├── public                      # CSS-related folder
+    │   └── styles.css
+    ├── README.md
+    └── view                        # HTML-related folder
+        └── index.html
+```
 ## Setup
 - Clone project
 ```
