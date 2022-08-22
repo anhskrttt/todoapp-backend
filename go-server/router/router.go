@@ -7,7 +7,7 @@ import (
 )
 
 func Router() *mux.Router {
-	middleware.InitDatabase()
+	middleware.Init()
 
 	r := mux.NewRouter()
 
