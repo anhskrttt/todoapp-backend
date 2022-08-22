@@ -79,7 +79,7 @@ func main() {
 	// Delete a task by id.
 	r.HandleFunc("/api/task/{id}", DeleteTaskById).Methods("DELETE")
 	// Delete all tasks.
-	// r.HandleFunc("/api/deleteAllTask", DeleteAllTodo).Methods("DELETE", "OPTIONS")
+	r.HandleFunc("/api/task", DeleteAllTasks).Methods("DELETE")
 
 	// Start server.
 	fmt.Println("Listening and serving.....")
@@ -162,4 +162,11 @@ func DeleteTaskById(w http.ResponseWriter, r *http.Request) {
 	}
 	// Future task: Return error invalid
 	json.NewEncoder(w).Encode(&Task{})
+}
+
+func DeleteAllTasks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	tasks = tasks[:0]
+	json.NewEncoder(w).Encode(tasks)
+
 }
