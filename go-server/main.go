@@ -46,6 +46,11 @@ func main() {
 		Name:        "Learn RestfulAPI",
 		Description: "Do freecodecamp course: RestfulAPI",
 		Status:      true,
+	}, Task{
+		ID:          "2",
+		Name:        "Learn Security",
+		Description: "Do freecodecamp course: Security",
+		Status:      false,
 	})
 
 	// Route Handlers / Endpoints
@@ -66,7 +71,7 @@ func main() {
 	r.HandleFunc("/api/todo", AddTask).Methods("POST")
 
 	// Set task's status to done.
-	// r.HandleFunc("/api/todo/done/{id}", SetDone).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/todo/done/{id}", SetDone).Methods("PUT", "OPTIONS")
 	// Set task's status to undone.
 	// r.HandleFunc("/api/todo/undone/{id}", SetUndone).Methods("PUT", "OPTIONS")
 	// Future tasks.
@@ -117,4 +122,18 @@ func AddTask(w http.ResponseWriter, r *http.Request) {
 	taskSample.ID = strconv.Itoa((rand.Intn(1000000)))
 	tasks = append(tasks, taskSample)
 	json.NewEncoder(w).Encode(taskSample)
+}
+
+func SetDone(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Change status to done")
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for i, t := range tasks {
+		if params["id"] == t.ID {
+			tasks[i].Status = true
+			json.NewEncoder(w).Encode(t)
+			return
+		}
+	}
+	json.NewEncoder(w).Encode((&Task{}))
 }
