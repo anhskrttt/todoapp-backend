@@ -3,6 +3,7 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
+	"go-server/models"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -10,43 +11,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Structs (Models)
-// type User struct {
-// 	ID       int       `json: "id"`
-// 	Username string    `json: "username"`
-// 	Tasks    *TaskList `json: "tasks"`
-// }
+var tasks = models.Tasks
 
-// type TaskList struct {
-// 	ID    int    `json: "id"`
-// 	Name  string `json: "name"`
-// 	Tasks *Task  `json:"tasks"`
-// }
-
-type Task struct {
-	ID          string `json: "id"`
-	Name        string `json: "name"`
-	Description string `json: "description"`
-	Status      bool   `json: "status"`
-}
-
-// Future task: Connect to DB
-var tasks []Task
-
-func InitDatabase() {
-	// Mock data.
-	tasks = append(tasks, Task{
+func Init() {
+	tasks = append(tasks, models.Task{
 		ID:          "1",
 		Name:        "Learn RestfulAPI",
 		Description: "Do freecodecamp course: RestfulAPI",
 		Status:      true,
-	}, Task{
+	}, models.Task{
 		ID:          "2",
 		Name:        "Learn Security",
 		Description: "Do freecodecamp course: Security",
 		Status:      false,
 	})
 }
+
 
 func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	welcome := "Welcome to my homepage"
@@ -71,12 +51,12 @@ func GetTaskById(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// Future work: Return error invalid id.
-	json.NewEncoder(w).Encode((&Task{}))
+	json.NewEncoder(w).Encode((&models.Task{}))
 }
 
 func AddTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var taskSample Task
+	var taskSample models.Task
 	// Why "_" ?
 	_ = json.NewDecoder(r.Body).Decode(&taskSample)
 	taskSample.ID = strconv.Itoa((rand.Intn(1000000)))
@@ -94,7 +74,7 @@ func SetDone(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	json.NewEncoder(w).Encode((&Task{}))
+	json.NewEncoder(w).Encode((&models.Task{}))
 }
 
 func SetUndone(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +87,7 @@ func SetUndone(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	json.NewEncoder(w).Encode((&Task{}))
+	json.NewEncoder(w).Encode((&models.Task{}))
 }
 
 func DeleteTaskById(w http.ResponseWriter, r *http.Request) {
@@ -123,7 +103,7 @@ func DeleteTaskById(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// Future task: Return error invalid
-	json.NewEncoder(w).Encode(&Task{})
+	json.NewEncoder(w).Encode(&models.Task{})
 }
 
 func DeleteAllTasks(w http.ResponseWriter, r *http.Request) {
