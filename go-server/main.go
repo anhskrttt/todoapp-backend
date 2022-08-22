@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"strconv"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -52,9 +52,11 @@ func main() {
 	// Test API.
 	r.HandleFunc("/", HomePageHandler).Methods("GET")
 	// My APIs.
-	r.HandleFunc("/api/todo", GetAllTask).Methods("GET")
+	// Get all tasks.
+	// Future task: logic for "/api/dodo?id="
+	r.HandleFunc("/api/todo", GetAllTasks).Methods("GET")
 	// Get task info by id.
-	// r.HandleFunc("/api/todo/{id}", GetTodoById).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/todo/{id}", GetTaskById).Methods("GET")
 	// Future tasks.
 	// Get all done tasks.
 	// Get all undone tasks.
@@ -85,10 +87,26 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&welcome)
 }
 
-func GetAllTask(w http.ResponseWriter, r *http.Request) {
+func GetAllTasks(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Get all tasks.")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tasks)
+}
 
+func GetTaskById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	// Get params
+	params := mux.Vars(r)
+	fmt.Println(params)
+
+	for _, t := range tasks {
+		if params["id"] == t.ID {
+			json.NewEncoder(w).Encode(t)
+			return
+		}
+	}
+	// Future work: Return error invalid id.
+	json.NewEncoder(w).Encode((&Task{}))
 }
 
 func AddTask(w http.ResponseWriter, r *http.Request) {
