@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
+	"strconv"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -50,7 +52,7 @@ func main() {
 	// Test API.
 	r.HandleFunc("/", HomePageHandler).Methods("GET")
 	// My APIs.
-	r.HandleFunc("/api/todo", GetAllTask).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/todo", GetAllTask).Methods("GET")
 	// Get task info by id.
 	// r.HandleFunc("/api/todo/{id}", GetTodoById).Methods("GET", "OPTIONS")
 	// Future tasks.
@@ -59,7 +61,7 @@ func main() {
 	// Get all tasks from startDate to endDate.
 
 	// Add a new task.
-	r.HandleFunc("/api/todo", AddTask).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/todo", AddTask).Methods("POST")
 
 	// Set task's status to done.
 	// r.HandleFunc("/api/todo/done/{id}", SetDone).Methods("PUT", "OPTIONS")
@@ -91,5 +93,10 @@ func GetAllTask(w http.ResponseWriter, r *http.Request) {
 
 func AddTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
+	var taskSample Task
+	// Why "_" ?
+	_ = json.NewDecoder(r.Body).Decode(&taskSample)
+	taskSample.ID = strconv.Itoa((rand.Intn(1000000)))
+	tasks = append(tasks, taskSample)
+	json.NewEncoder(w).Encode(taskSample)
 }
